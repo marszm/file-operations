@@ -8,7 +8,7 @@ public class FileOperationsApplication {
 
 	public static void main(String[] args) {
 		SpringApplication.run(FileOperationsApplication.class, args);
-		System.out.println("dsadasda");
+		System.out.println("test");
 	}
 
 }
