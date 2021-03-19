@@ -40,8 +40,8 @@ public class UploadDownloadFileSystemController {
         MediaType contentType = MediaType.IMAGE_JPEG;
 
         return ResponseEntity.ok()
-            .contentType(contentType)
-                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment;fileName="+resource.getFilename())
+                .contentType(contentType)
+                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment;fileName=" + resource.getFilename())
                 .body(resource);
     }
 
