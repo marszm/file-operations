@@ -11,6 +11,9 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
+import javax.servlet.http.HttpServletRequest;
+import java.io.IOException;
+
 @RestController
 @AllArgsConstructor
 public class UploadDownloadFileSystemController {
@@ -33,14 +36,20 @@ public class UploadDownloadFileSystemController {
     }
 
     @GetMapping("/download/{fileName}")
-    public ResponseEntity<Resource> downloadSingleFile(@PathVariable String fileName) {
+    public ResponseEntity<Resource> downloadSingleFile(@PathVariable String fileName, HttpServletRequest httpServletRequest) {
 
         Resource resource = filerStorageService.downloadFile(fileName);
 
-        MediaType contentType = MediaType.IMAGE_JPEG;
+        String mimeType;
+
+        try {
+            mimeType = httpServletRequest.getServletContext().getMimeType(resource.getFile().getAbsolutePath());
+        } catch (IOException e) {
+            mimeType = MediaType.APPLICATION_OCTET_STREAM_VALUE;
+        }
 
         return ResponseEntity.ok()
-                .contentType(contentType)
+                .contentType(MediaType.parseMediaType(mimeType))
                 .header(HttpHeaders.CONTENT_DISPOSITION, "inline;fileName=" + resource.getFilename())
                 .body(resource);
     }
