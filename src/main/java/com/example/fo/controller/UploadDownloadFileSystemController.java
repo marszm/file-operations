@@ -7,15 +7,20 @@ import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.util.StreamUtils;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipOutputStream;
 
 @RestController
 @AllArgsConstructor
@@ -60,7 +65,7 @@ public class UploadDownloadFileSystemController {
     @PostMapping("/multiple/upload")
     List<FileUploadResponse> multipleFileUpload(@RequestParam("multipartFiles") MultipartFile[] multipartFiles) {
 
-        if(multipartFiles.length >= 5) {
+        if (multipartFiles.length >= 5) {
             throw new RuntimeException("only 5 files are alowed to upload!!! ");
         }
 
@@ -80,5 +85,26 @@ public class UploadDownloadFileSystemController {
         return fileUploadResponseList;
     }
 
+    @GetMapping("zipDownload")
+    void zipDownload(@RequestParam("fileName") String[] files, HttpServletResponse httpServletResponse) throws IOException {
+
+        try (ZipOutputStream zipOutputStream = new ZipOutputStream(httpServletResponse.getOutputStream())) {
+            Arrays.asList(files)
+                    .forEach(file -> {
+                        Resource resource = filerStorageService.downloadFile(file);
+                        ZipEntry zipEntry = new ZipEntry(Objects.requireNonNull(resource.getFilename()));
+                        try {
+                            zipEntry.setSize(resource.contentLength());
+                            zipOutputStream.putNextEntry(zipEntry);
+                            StreamUtils.copy(resource.getInputStream(), zipOutputStream);
+                            zipOutputStream.closeEntry();
+                        } catch (IOException e) {
+                            throw new RuntimeException("some exception when zipping!");
+                        }
+                    });
+            zipOutputStream.finish();
+        }
+        httpServletResponse.setStatus(200);
+    }
 
 }
