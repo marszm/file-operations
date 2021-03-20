@@ -60,6 +60,10 @@ public class UploadDownloadFileSystemController {
     @PostMapping("/multiple/upload")
     List<FileUploadResponse> multipleFileUpload(@RequestParam("multipartFiles") MultipartFile[] multipartFiles) {
 
+        if(multipartFiles.length >= 5) {
+            throw new RuntimeException("only 5 files are alowed to upload!!! ");
+        }
+
         List<FileUploadResponse> fileUploadResponseList = new ArrayList<>();
 
         Arrays.stream(multipartFiles)
