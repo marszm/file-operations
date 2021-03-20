@@ -61,7 +61,7 @@ public class FilerStorageService {
         if (resource.exists() && resource.isReadable()) {
             return resource;
         } else {
-            throw new RuntimeException("file not exist or not redable");
+            throw new RuntimeException("file not exist or not readable");
         }
     }
 }
