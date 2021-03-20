@@ -13,6 +13,9 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 @RestController
 @AllArgsConstructor
@@ -53,5 +56,25 @@ public class UploadDownloadFileSystemController {
                 .header(HttpHeaders.CONTENT_DISPOSITION, "inline;fileName=" + resource.getFilename())
                 .body(resource);
     }
+
+    @PostMapping("/multiple/upload")
+    List<FileUploadResponse> multipleFileUpload(@RequestParam("multipartFiles") MultipartFile[] multipartFiles) {
+
+        List<FileUploadResponse> fileUploadResponseList = new ArrayList<>();
+
+        Arrays.stream(multipartFiles)
+                .forEach(file -> {
+                    String fileName = filerStorageService.storeFile(file);
+                    String url = ServletUriComponentsBuilder.fromCurrentContextPath()
+                            .path("/download/")
+                            .path(fileName)
+                            .toUriString();
+                    String contentType = file.getContentType();
+                    FileUploadResponse fileUploadResponse = new FileUploadResponse(fileName, contentType, url);
+                    fileUploadResponseList.add(fileUploadResponse);
+                });
+        return fileUploadResponseList;
+    }
+
 
 }
