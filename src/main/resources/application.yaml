@@ -10,3 +10,11 @@ spring:
       file-size-threshold: 5MB
       max-file-size: 10MB
       max-request-size: 30MB
+  datasource:
+    url: jdbc:mysql://localhost:3306/default_schema?useSSL=false
+    username: root
+    password: root
+    driver-class-name: com.mysql.cj.jdbc.Driver
+  jpa:
+    hibernate:
+      ddl-auto: create
