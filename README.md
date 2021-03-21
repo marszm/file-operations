@@ -4,3 +4,4 @@ Already implemented:
 - render file in the browser
 - deriving content type dynamically
 - manage different file types - .pdf/.jpg/.doc/.docx etc.
+- upload/download single file into db
