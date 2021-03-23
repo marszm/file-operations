@@ -3,6 +3,7 @@ package com.example.fo.controller;
 import com.example.fo.service.FilerStorageService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.mockito.BDDMockito;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -39,6 +40,8 @@ class UploadDownloadFileSystemControllerTest {
         this.mockMvc.perform(MockMvcRequestBuilders.multipart("/single/upload").file(multipartFile))
                 .andExpect(MockMvcResultMatchers.status().isOk())
         .andExpect(content().json("{\"fileName\":test-file.txt,\"contentType\":\"text/plain\",\"url\":\"http://localhost/download/test-file.txt\"}"));
+
+        BDDMockito.then(this.filerStorageService).should().storeFile(multipartFile);
 
     }
 
