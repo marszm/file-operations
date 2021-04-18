@@ -14,7 +14,6 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
-import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.ByteArrayInputStream;
@@ -49,7 +48,7 @@ class UploadDownloadFileSystemControllerTest {
 
         this.mockMvc.perform(MockMvcRequestBuilders.multipart("/single/upload").file(multipartFile))
                 .andExpect(status().isOk())
-        .andExpect(content().json("{\"fileName\":test-file.txt,\"contentType\":\"text/plain\",\"url\":\"http://localhost/download/test-file.txt\"}"));
+                .andExpect(content().json("{\"fileName\":test-file.txt,\"contentType\":\"text/plain\",\"url\":\"http://localhost/download/test-file.txt\"}"));
 
         BDDMockito.then(this.filerStorageService).should().storeFile(multipartFile);
 
@@ -62,8 +61,8 @@ class UploadDownloadFileSystemControllerTest {
         Resource resource = getMockedResource();
         Mockito.when(filerStorageService.downloadFile(anyString())).thenReturn(resource);
         mockMvc.perform(get("/download/abc.jpg"))
-        .andExpect(status().isOk())
-                .andExpect(header().string(HttpHeaders.CONTENT_DISPOSITION, "inline;fileName="+resource.getFilename()))
+                .andExpect(status().isOk())
+                .andExpect(header().string(HttpHeaders.CONTENT_DISPOSITION, "inline;fileName=" + resource.getFilename()))
                 .andExpect(content().bytes("Green Learner".getBytes()));
 
         BDDMockito.then(filerStorageService).should().downloadFile("abc.jpg");
@@ -126,12 +125,4 @@ class UploadDownloadFileSystemControllerTest {
         };
         return resource;
     }
-
-//    @Test
-//    void multipleFileUpload() {
-//    }
-
-//    @Test
-//    void zipDownload() {
-//    }
 }
